@@ -1,3 +1,16 @@
 <H1>
     Welcome user {{msg}}
 </H1>
+
+    <form action="/" method="post">
+        <input type="text" name="idea">
+        <input type="submit">
+    </form>
+
+    <ul>
+        {% for doc in doc_ref %}
+        <li>
+            {{doc.to_dict()['body']}}
+        </li>
+        {% endfor %}
+    </ul>
