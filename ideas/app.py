@@ -32,6 +32,8 @@ def home():
     if('user' in session ):
         uid = session['user']
         print(uid)
+        user_query = db.collection('users').document(uid).get()
+        name = user_query.to_dict()['display name']
         if request.method == 'POST':
             body=request.form['idea']
             uid = uid
@@ -39,12 +41,13 @@ def home():
             db.collection('posts').add(data)
             return redirect(url_for('home'))
         doc_ref = db.collection("posts")
-        query = doc_ref.where("uid"== uid).order_by('ts',direction =firestore.Query.DECENDING)
-        results =query.stream()
+        query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
+        #doc_ref = db.collection("posts").where("uid", "==", uid).get()
+        results =query.get()
         print(results)
-        for doc in doc_ref:
+        for doc in results:
             print(doc.to_dict())
-        return render_template('index.html' ,msg=uid ,doc_ref=doc_ref)
+        return render_template('index.html' ,msg=name ,doc_ref=results)
     else:
         return redirect(url_for('login'))   
 
@@ -98,9 +101,9 @@ def logout():
 @app.route('/user/<string:id>')
 def profile(id):
     req_user =db.collection('users').document(id).get()
-    print(req_user.to_dict())
-       
-    return "hello " + id
+    user_details=req_user.to_dict()
+    
+    return render_template('userprofile.html',user_details = user_details)
     
 if __name__ =='__main__':
     app.run()
