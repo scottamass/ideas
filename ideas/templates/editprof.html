@@ -1,0 +1,12 @@
+<h1> edit user profile</h1>
+<section>
+{{ user_details }}    
+
+<form action="/edit_user/{{user_details['uid']}}" method="post">
+<input type="text" name="bio" value='{{user_details['bio']}}' >
+<input type="submit">
+
+</form>
+</div>    
+
+</section>

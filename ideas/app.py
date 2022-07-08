@@ -1,6 +1,8 @@
 
+
 import datetime
 import json
+from urllib import response
 
 import firebase_admin
 import pyrebase
@@ -37,7 +39,7 @@ def home():
         if request.method == 'POST':
             body=request.form['idea']
             uid = uid
-            data = {'body':body,'uid':uid, 'ts':datetime.datetime.now() }
+            data = {'body':body,'uid':uid, 'idea':'on the back burner','level':1, 'ts':datetime.datetime.now() }
             db.collection('posts').add(data)
             return redirect(url_for('home'))
         doc_ref = db.collection("posts")
@@ -104,7 +106,19 @@ def profile(id):
     user_details=req_user.to_dict()
     
     return render_template('userprofile.html',user_details = user_details)
-    
+
+@app.route('/edit_user/<string:id>',methods=['GET','POST'])
+def edit_profile(id):
+    if('user' in session ):
+        req_user =db.collection('users').document(id).get()
+        user_details=req_user.to_dict()
+        if request.method =='POST':
+            bio = request.form['bio']
+            db.collection('users').document(id).set({'bio':bio},merge=True)
+            return redirect(request.url)
+
+        return render_template('editprof.html',user_details = user_details)
+    return response, 401
 if __name__ =='__main__':
     app.run()
 
