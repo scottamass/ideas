@@ -9,12 +9,13 @@ import pyrebase
 from firebase_admin import auth as fbauth
 from firebase_admin import credentials, firestore
 
+
 from flask import Flask, redirect, render_template, request, session, url_for
 
 #App Config
 app=Flask(__name__)
 
-
+app.config['SESSION_PERMANENT'] = True
 app.secret_key = "shhhh"
 
 
@@ -26,7 +27,9 @@ auth=pb.auth()
 fauth =firebase_admin
 db=firestore.client()
 
-
+@app.before_request
+def make_sessions_permanant():
+    session.permanent =True
 
 @app.route('/',methods=['GET','POST'])
 def home():
@@ -109,16 +112,18 @@ def profile(id):
 
 @app.route('/edit_user/<string:id>',methods=['GET','POST'])
 def edit_profile(id):
-    if('user' in session ):
-        req_user =db.collection('users').document(id).get()
-        user_details=req_user.to_dict()
-        if request.method =='POST':
-            bio = request.form['bio']
-            db.collection('users').document(id).set({'bio':bio},merge=True)
-            return redirect(request.url)
+    
+        if id == session['user']:
+            req_user =db.collection('users').document(id).get()
+            user_details=req_user.to_dict()
+            if request.method =='POST':
+                bio = request.form['bio']
+                db.collection('users').document(id).set({'bio':bio},merge=True)
+                return redirect(request.url)
 
-        return render_template('editprof.html',user_details = user_details)
-    return response, 401
+            return render_template('editprof.html',user_details = user_details)
+     
+        else: return "You Shall not Pass",401
 if __name__ =='__main__':
     app.run()
 
