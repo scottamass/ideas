@@ -38,7 +38,10 @@ def home():
             data = {'body':body,'uid':uid, 'ts':datetime.datetime.now() }
             db.collection('posts').add(data)
             return redirect(url_for('home'))
-        doc_ref = db.collection("posts").where("uid", "==", uid).get()
+        doc_ref = db.collection("posts")
+        query = doc_ref.where("uid"== uid).order_by('ts',direction =firestore.Query.DECENDING)
+        results =query.stream()
+        print(results)
         for doc in doc_ref:
             print(doc.to_dict())
         return render_template('index.html' ,msg=uid ,doc_ref=doc_ref)
