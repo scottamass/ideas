@@ -1,12 +1,13 @@
 
-from re import U
-import firebase_admin
-from firebase_admin import credentials, firestore ,auth as fbauth
-from flask import Flask, redirect, render_template,request,session,url_for
-import pyrebase
+import datetime
 import json
 
+import firebase_admin
+import pyrebase
+from firebase_admin import auth as fbauth
+from firebase_admin import credentials, firestore
 
+from flask import Flask, redirect, render_template, request, session, url_for
 
 #App Config
 app=Flask(__name__)
@@ -34,7 +35,7 @@ def home():
         if request.method == 'POST':
             body=request.form['idea']
             uid = uid
-            data = {'body':body,'uid':uid}
+            data = {'body':body,'uid':uid, 'ts':datetime.datetime.now() }
             db.collection('posts').add(data)
             return redirect(url_for('home'))
         doc_ref = db.collection("posts").where("uid", "==", uid).get()
