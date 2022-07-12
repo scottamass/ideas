@@ -1,3 +1,5 @@
+{% extends 'layout.html' %}
+{% block content %}
 <H1>
     Welcome user {{msg}}
 </H1>
@@ -10,7 +12,23 @@
     <ul>
         {% for doc in doc_ref %}
         <li>
-            {{doc.to_dict()}}
+            <div class="card">{{doc.to_dict()['body']}}</div>    
         </li>
         {% endfor %}
     </ul>
+<style>
+    ul{ list-style: none;
+    box-sizing: border-box;
+margin: 0 auto;}
+    .card{
+        max-width: 400px;
+        border-radius: 5%;
+        background-color: aqua;
+        padding: 2em;
+        text-align: center;
+        font-size: medium;
+        margin: 0.5em;
+    }
+    
+</style>
+{% endblock %}

@@ -10,7 +10,7 @@ from firebase_admin import auth as fbauth
 from firebase_admin import credentials, firestore
 
 
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for
 
 #App Config
 app=Flask(__name__)
@@ -30,6 +30,11 @@ db=firestore.client()
 @app.before_request
 def make_sessions_permanant():
     session.permanent =True
+
+""" @app.route('/static/<path:path>')
+def static_dir(path):
+    return send_from_directory("static",path) """
+
 
 @app.route('/',methods=['GET','POST'])
 def home():
