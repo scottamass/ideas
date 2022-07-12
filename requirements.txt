@@ -248,6 +248,9 @@ grpcio==1.47.0; platform_python_implementation != "PyPy" and python_version >= "
     --hash=sha256:090dfa19f41efcbe760ae59b34da4304d4be9a59960c9682b7eab7e0b6748a79 \
     --hash=sha256:55cd8b13c5ef22003889f599b8f2930836c6f71cd7cf3fc0196633813dc4f928 \
     --hash=sha256:5dbba95fab9b35957b4977b8904fc1fa56b302f9051eff4d7716ebb0c087f801
+gunicorn==20.1.0; python_version >= "3.5" \
+    --hash=sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e \
+    --hash=sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8
 httplib2==0.20.4; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6" \
     --hash=sha256:8b6a905cb1c79eefd03f8669fd993c36dc341f7c558f056cb5a33b5c2f458543 \
     --hash=sha256:58a98e45b4b1a48273073f905d2961666ecf0fbac4250ea5b47aef259eb5c585
