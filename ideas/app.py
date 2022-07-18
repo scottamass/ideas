@@ -61,10 +61,9 @@ def create_app():
 
     @app.route('/',methods=['GET','POST'])
     def home():
-        print(os.environ.get('APIKEY'))
+        
         if('user' in session ):
             uid = session['user']
-            print(uid)
             user_query = db.collection('users').document(uid).get()
             name = user_query.to_dict()['display name']
             if request.method == 'POST':
@@ -77,14 +76,20 @@ def create_app():
             query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
             results =query.get()
-            print(results)
-            for doc in results:
-                print(doc.to_dict())
+            #print(results)
+            #for doc in results:
+            #    print(doc.to_dict())
             return render_template('index.html' ,uid=uid,msg=name ,doc_ref=results)
         else:
-            return redirect(url_for('login'))   
+            return redirect(url_for('about'))   
 
-
+    @app.route('/about')
+    def about():
+        if('user' in session ):
+            uid = session['user']
+        else:
+            uid = False    
+        return render_template('about.html',msg=uid,uid=uid)
 
     #api route signin new users 
     @app.route('/login', methods=['GET','POST'])
@@ -97,7 +102,7 @@ def create_app():
                 try:
                     user = auth.sign_in_with_email_and_password(email,password)
                     id=fbauth.get_user_by_email(email)  
-                    print(id.uid)
+                    #print(id.uid)
                     uid = id.uid
                     session['user'] = uid
                 
@@ -118,7 +123,7 @@ def create_app():
             #user=auth.create_user_with_email_and_password(email,password)
             user=fbauth.create_user(uid=uid,display_name=display_name,email=email,password=password)
             id=fbauth.get_user_by_email(email)
-            print(id.uid)
+            #print(id.uid)
             db.collection('users').document(id.uid).set({"display name":display_name,"email":id.email,"uid":display_name})
             
                 
@@ -131,7 +136,7 @@ def create_app():
     @app.route('/logout')
     def logout():
         session.pop('user')
-        return redirect(url_for('home'))
+        return redirect(url_for('about'))
 
     @app.route('/user/<string:id>')
     def profile(id):
