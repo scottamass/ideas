@@ -3,16 +3,34 @@
 <H1>
     Welcome user {{msg}}
 </H1>
+<div class="justify-conetent-centre">
+    <form  style="margin-left: auto; margin-right:auto;" action="/" method="post">
+        <div class="row">
 
-    <form action="/" method="post">
-        <input type="text" name="idea">
-        <input type="submit">
+
+            <div class="form-group col-sm-8">
+                
+                <input class="form-control" type="text" name="idea">
+            </div>
+            
+            
+            <div class="form-group col-sm-4">
+
+                <button type="submit" class="btn btn-primary mb-2">Post Your Idea</button>
+            </div>
+        </div>
+        
     </form>
+</div>
 
     <ul>
         {% for doc in doc_ref %}
         <li>
-            <div class="card">{{doc.to_dict()['body']}}</div>    
+            <div class="card" style="margin-top: 1em;">
+                <div class="card-body">
+                    <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
+                    <p class="card-text">{{doc.to_dict()['idea']}}</p>
+                </div></div>    
         </li>
         {% endfor %}
     </ul>
@@ -20,15 +38,15 @@
     ul{ list-style: none;
     box-sizing: border-box;
 margin: 0 auto;}
-    .card{
+   .card{
         max-width: 400px;
-        border-radius: 5%;
+        margin-left: auto;
+        margin-right: auto;
         background-color: aqua;
-        padding: 2em;
+        
         text-align: center;
-        font-size: medium;
-        margin: 0.5em;
-    }
+        
+    } 
     
 </style>
 {% endblock %}

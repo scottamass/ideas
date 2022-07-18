@@ -41,6 +41,8 @@ def create_app():
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-888uq%40ideapad-9e040.iam.gserviceaccount.com"
     }
 
+    key = os.getenv('KEY')
+
     cred=credentials.Certificate(Key)
     firebase_admin.initialize_app(cred)
     pb = pyrebase.initialize_app(FBconfig)
@@ -59,7 +61,7 @@ def create_app():
 
     @app.route('/',methods=['GET','POST'])
     def home():
-        
+        print(os.environ.get('APIKEY'))
         if('user' in session ):
             uid = session['user']
             print(uid)
@@ -78,7 +80,7 @@ def create_app():
             print(results)
             for doc in results:
                 print(doc.to_dict())
-            return render_template('index.html' ,msg=name ,doc_ref=results)
+            return render_template('index.html' ,uid=uid,msg=name ,doc_ref=results)
         else:
             return redirect(url_for('login'))   
 
@@ -110,12 +112,14 @@ def create_app():
     def signup():
         if request.method == 'POST': 
             display_name = request.form['name']
+            uid=display_name
             email = request.form['username']
             password = request.form['pwd']
-            user=auth.create_user_with_email_and_password(email,password)
+            #user=auth.create_user_with_email_and_password(email,password)
+            user=fbauth.create_user(uid=uid,display_name=display_name,email=email,password=password)
             id=fbauth.get_user_by_email(email)
             print(id.uid)
-            db.collection('users').document(id.uid).set({"display name":display_name,"email":id.email,"uid":id.uid})
+            db.collection('users').document(id.uid).set({"display name":display_name,"email":id.email,"uid":display_name})
             
                 
             return redirect(url_for('home'))  
