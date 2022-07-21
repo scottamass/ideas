@@ -1,4 +1,5 @@
-#v.5
+#v0.7a
+
 
 import datetime
 
@@ -64,8 +65,13 @@ def create_app():
         
         if('user' in session ):
             uid = session['user']
-            user_query = db.collection('users').document(uid).get()
-            name = user_query.to_dict()['display name']
+            
+            #user_query = db.collection('users').document(uid).get()
+            #name = user_query.to_dict()['display name']
+            #if ('color' in session):
+            #    session['color'] =user_query.to_dict()['bg']
+            
+            print(session)
             if request.method == 'POST':
                 body=request.form['idea']
                 uid = uid
@@ -76,10 +82,7 @@ def create_app():
             query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
             results =query.get()
-            #print(results)
-            #for doc in results:
-            #    print(doc.to_dict())
-            return render_template('index.html' ,uid=uid,msg=name ,doc_ref=results)
+            return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
         else:
             return redirect(url_for('about'))   
 
@@ -105,7 +108,17 @@ def create_app():
                     #print(id.uid)
                     uid = id.uid
                     session['user'] = uid
-                
+                    user_query = db.collection('users').document(uid).get()
+                    name = user_query.to_dict()
+                    print(name)
+                    if 'bg' in name: 
+                        print('color')
+                        session['color'] = name['bg']
+                    else:
+                        session['color'] = '#8fcde3'
+                    
+                    
+
                     return redirect(url_for('home'))
                 except:
                     return "incorrect password"    
@@ -124,7 +137,7 @@ def create_app():
             user=fbauth.create_user(uid=uid,display_name=display_name,email=email,password=password)
             id=fbauth.get_user_by_email(email)
             #print(id.uid)
-            db.collection('users').document(id.uid).set({"display name":display_name,"email":id.email,"uid":display_name})
+            db.collection('users').document(id.uid).set({"display name":display_name,"email":id.email,"uid":display_name,"bg":"#a19897"})
             
                 
             return redirect(url_for('home'))  
@@ -153,12 +166,30 @@ def create_app():
                 user_details=req_user.to_dict()
                 if request.method =='POST':
                     bio = request.form['bio']
-                    db.collection('users').document(id).set({'bio':bio},merge=True)
+                    bg= request.form['bg']
+                    db.collection('users').document(id).set({'bio':bio,'bg':bg},merge=True)
                     return redirect(request.url)
 
                 return render_template('editprof.html',user_details = user_details)
         
             else: return "You Shall not Pass",401
+
+    @app.route('/idea/<string:id>')    
+    def idea(id):
+        user=session['user']
+        req_idea = db.collection('posts').document(id).get()
+        processed_idea= req_idea.to_dict()
+        idea_id =req_idea.id
+        print(idea_id)
+        return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user )  
+
+    @app.route('/promote/<string:id>',methods=['POST'])
+    def promote(id):
+        idea = db.collection('posts').document(id)
+        
+        idea.update({'level':2 ,'idea':'planning'})
+        return redirect(url_for('idea' ,id=id))    
+    
     if __name__ =='__main__':
         app.run()
 
