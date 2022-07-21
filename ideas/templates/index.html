@@ -45,19 +45,19 @@
     {% set four = [] %}
     {% for doc in doc_ref %}
         {% if doc.to_dict()['level'] == 1 %}
-        {{doc}}
+        
         {{one.append(doc)}}
         {% endif %}
         {% if doc.to_dict()['level'] == 2 %}
-        {{doc}}
+        
         {{two.append(doc)}}
         {% endif %}
         {% if doc.to_dict()['level'] == 3 %}
-        {{doc}}
+        
         {{three.append(doc)}}
         {% endif %}
         {% if doc.to_dict()['level'] == 4 %}
-        {{doc}}
+        
         {{four.append(doc)}}
         {% endif %}
     {% endfor %}
