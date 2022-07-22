@@ -1,9 +1,39 @@
-<h1>user profile</h1>
-<section>
-{{ user_details }}    
-<div class="profile header">
-    <div class="profile pic"></div>
-    <div class="name"><h2>{{user_details['display name']}}</h2></div>
-</div>    
+{% extends 'layout.html' %}
+{% block content %}
 
+<section>
+    {{ user_details }}   
+   
+<div class="row">
+    <div class="col-lg-3"><div class="row " > 
+    <div class=" mt-auto mb-auto col-3 col-lg-12 order-2 order-lg-2">{{user_details['display name']}}</div>
+    <img class="col-3 g-0 col-lg-12 order-1 order-lg-1 profileimg"   src="https://i.picsum.photos/id/1024/1920/1280.jpg?hmac=-PIpG7j_fRwN8Qtfnsc3M8-kC3yb0XYOBfVzlPSuVII">
+    <div class=" d-grid mt-1 order-3  d-md-block order-lg-3">
+    <form action="/edit_user/{{user_details['uid']}}">
+        <button class="btn btn-outline-dark"> Edit Profile</button>
+    </form>
+</div>
+</div>
+</div>
+    <div class="col-lg-7  mt-5">
+    
+        <div class="card"><div class="card-body">
+        <h5 class="card-title">Bio</h5>
+        <p class="card-text">{{user_details['bio']}}</p>
+    </div></div></div>
+</div>
 </section>
+<style>
+    .profileimg{height: 10rem;
+    width: 10rem;
+    object-fit: cover;
+    border-radius: 50%;
+    }
+    @media (min-width:992px){
+        .profileimg{height: 260px;
+    width: 260px;
+    object-fit: cover;
+    }  
+    }
+</style>
+{% endblock %}
