@@ -56,16 +56,24 @@
     <div class="row">
         <div class="col-sm-3">back burner
         {% for doc in one %}
-        <div class="card" style="margin-top: 1em;">
+        <div class="card" style="margin-top: 1em; max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;        
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);">
             <div class="card-body">
                 <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
                 <p class="card-text">{{doc.to_dict()['idea']}}<a href="/idea/{{doc.id}}">{{doc.id}}</a></p>
             </div></div>
         {% endfor%}
     </div>
-        <div class="col-sm-3">planning
+        <div class=" col-sm-3">planning
             {% for doc in two %}
-            <div class="card" style="margin-top: 1em;">
+            <div class="card" style="margin-top: 1em; max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;        
+            text-align: center;">
                 <div class="card-body">
                     <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
                     <p class="card-text">{{doc.to_dict()['idea']}}<a href="/idea/{{doc.id}}">{{doc.id}}</a></p>
@@ -74,7 +82,10 @@
         </div>
         <div class="col-sm-3">doing
             {% for doc in three %}
-            <div class="card" style="margin-top: 1em;">
+            <div class="card" style="margin-top: 1em; max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;        
+            text-align: center;">
                 <div class="card-body">
                     <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
                     <p class="card-text">{{doc.to_dict()['idea']}}<a href="/idea/{{doc.id}}">{{doc.id}}</a></p>
@@ -82,7 +93,10 @@
             {% endfor%}      </div>
         <div class="col-sm-3">done
             {% for doc in four %}
-            <div class="card" style="margin-top: 1em;">
+            <div class="card" style="margin-top: 1em; max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;        
+            text-align: center;">
                 <div class="card-body">
                     <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
                     <p class="card-text">{{doc.to_dict()['idea']}}<a href="/idea/{{doc.id}}">{{doc.id}}</a></p>
@@ -90,22 +104,5 @@
             {% endfor%}       </div>
     </div>
     
-<style>
-    body{
-        background-color:{{session['color']}}
-    }
-    ul{ list-style: none;
-    box-sizing: border-box;
-margin: 0 auto;}
-   .card{
-        max-width: 400px;
-        margin-left: auto;
-        margin-right: auto;
-        /*background-color: aqua;*/
-        
-        text-align: center;
-        
-    } 
-    
-</style>
+
 {% endblock %}

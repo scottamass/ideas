@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{% block title %}{% endblock %}</title>
     <!-- CSS only -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
@@ -18,37 +18,45 @@
           </button>
           <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{{msg}}</h5>
+              {% if session['user']%}
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Welcome, {{msg}}</h5>
+              {% else %}
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Ih</h5>
+              {% endif %}
               <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
               <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  {% if session['user']%}
+                
+                {% if session['user']%}
+                <li class="d-lg-none">
+                  <div class="card">
+                    <ul class="navbar-nav"  >
+                    <li class="nav-items"><a class="nav-link" href="/user/{{msg}}">Profile</a></li>
+                    <li class="nav-items"><a class="nav-link" href="/">Ideas</a></li>
+                   
+                    
+                  </ul></div>
+                </li>  
                 <li class=" d-none d-lg-block nav-item dropdown order-lg-3">
                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       {{msg}}
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="offcanvasNavbarDropdown">
+                    <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="offcanvasNavbarDropdown">
                       <li><a class="dropdown-item" href="/user/{{msg}}">Profile</a></li>
                       <li><a class="dropdown-item" href="/">Ideas</a></li>
                       <li>
                         <hr class="dropdown-divider">
                       </li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><a class="dropdown-item" href="/logout">Log Out</a></li>
                     </ul>
                     {% endif %}
                   </li>
                 <li class="nav-item order-lg-1">
-                  <a class="nav-link active" aria-current="page" href="#">Home</a>
+                  <a class="nav-link" aria-current="page" href="/about">about</a>
                 </li>
-                <li class="nav-item order-lg-2">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                {% if session['user']%}  
-                <form class="order-lg-4" action="/logout">    
-                  <button type="submit" class="btn btn-outline-success" >Logout</button>
-                </form>
-                {% endif %}
+               
+                
                 {% if not session['user']%}  
                 <form class="order-lg-4" action="/login">    
                   <button type="submit" class="btn btn-outline-success" >Log in</button>
@@ -57,23 +65,40 @@
                     <button type="submit" class="btn btn-outline-dark" >Sign-up</button>
                   </form>
                 {% endif %}
-                <li class="nav=item d-lg-block d-md-none "> <a class="nav-link" href="#">test</a></li>
+              
+              
+                {% if session['user']%}  
+                <form class="d-flex justify-content-end d-lg-none order-lg-4" action="/logout">    
+                  <button type="submit" class="btn btn-outline-danger" >Logout</button>
+                </form>
+                {% endif %}
+                
             </ul>
             </div>
           </div>
         </div>
       </nav>
-     
-    <header>
-       <!-- <image src="{{url_for('static', filename='logo.png')}}">-->
-        <h1 style="text-align:center">Welcome to the MVP Alpha test of IDEAhub</h1>
-    </header>
+     <main>
     <div class="container justify-content-center">
         
     {% block content %}
     {% endblock %}
     </div>
+  </main>
 </body>
-<!-- JavaScript Bundle with Popper -->
+<style>
+main{
+  opacity:0;
+  transition: opacity 2s ease-in-out, 2s ease-in-out;
+}
+body{
+  background-color:{{session['color']}}
+}
+</style>
+<script>
+  var main = document.querySelector("main");
+  main.style.opacity =1;
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </html>

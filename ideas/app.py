@@ -1,4 +1,4 @@
-#v0.7a
+#v0.9.1a
 
 
 import datetime
@@ -60,6 +60,15 @@ def create_app():
     def static_dir(path):
         return send_from_directory("static",path) """
 
+#functions 
+    def get_idea(uid):
+        doc_ref = db.collection("posts")
+        query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
+            #doc_ref = db.collection("posts").where("uid", "==", uid).get()
+        results =query.get()
+        return results
+
+###
 
     @app.route('/',methods=['GET','POST'])
     def home():
@@ -79,10 +88,11 @@ def create_app():
                 data = {'body':body,'uid':uid, 'idea':'on the back burner','level':1, 'ts':datetime.datetime.now() }
                 db.collection('posts').add(data)
                 return redirect(url_for('home'))
-            doc_ref = db.collection("posts")
-            query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
+            #doc_ref = db.collection("posts")
+            #query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
-            results =query.get()
+            #results =query.get()
+            results=get_idea(uid)
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
         else:
             return redirect(url_for('about'))   
@@ -169,20 +179,25 @@ def create_app():
                     bio = request.form['bio']
                     bg= request.form['bg']
                     db.collection('users').document(id).set({'bio':bio,'bg':bg},merge=True)
+                    session['color'] =bg
                     return redirect(request.url)
 
                 return render_template('editprof.html',user_details = user_details)
         
             else: return "You Shall not Pass",401
 
-    @app.route('/idea/<string:id>')    
+    @app.route('/idea/<string:id>',methods=['GET','POST'])    
     def idea(id):
         user=session['user']
         req_idea = db.collection('posts').document(id).get()
         processed_idea= req_idea.to_dict()
         idea_id =req_idea.id
-        print(idea_id)
-        return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user )  
+        ideas=get_idea(user)
+        if request.method == 'POST':
+            details = request.form['details']
+            db.collection('posts').document(id).set({'details':details},merge=True)
+            return redirect(request.url)
+        return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user, docs=ideas )  
 
     @app.route('/promote/<string:id>',methods=['POST'])
     def promote(id):
@@ -192,6 +207,17 @@ def create_app():
         print(level)
         idea.update({'level':level ,'idea':'planning'})
         return redirect(url_for('idea' ,id=id))    
+    @app.route('/demote/<string:id>',methods=['POST'])
+    def demote(id):
+        idea = db.collection('posts').document(id)
+        level =idea.get().to_dict()['level']
+        level = level - 1        
+        print(level)
+        idea.update({'level':level ,'idea':'planning'})
+        return redirect(url_for('idea' ,id=id))        
+    
+    
+    
     
     if __name__ =='__main__':
         app.run()
