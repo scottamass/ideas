@@ -24,43 +24,35 @@
     </form>
 </div>
 <h2>your ideas</h2>
-<!--
 
-    <ul>
-        {% for doc in doc_ref %}
-        <li>
-            <div class="card" style="margin-top: 1em;">
-                <div class="card-body">
-                    <h5 class="card-title">{{doc.to_dict()['body']}}</h5>
-                    <p class="card-text">{{doc.to_dict()['level']}}<a href="/idea/{{doc.id}}">{{doc.id}}</a></p>
-                </div></div>    
-            </li>
-            {% endfor %}
-        </ul>
-    -->
     
     {% set one = [] %}
     {% set two = [] %}
     {% set three = [] %}
     {% set four = [] %}
+
     {% for doc in doc_ref %}
         {% if doc.to_dict()['level'] == 1 %}
         
-        {{one.append(doc)}}
+        {{ one.append(doc) or "" }}
+        
+    
         {% endif %}
+    
         {% if doc.to_dict()['level'] == 2 %}
         
-        {{two.append(doc)}}
+        {{two.append(doc) or ""}}
         {% endif %}
         {% if doc.to_dict()['level'] == 3 %}
         
-        {{three.append(doc)}}
+        {{three.append(doc) or ""}}
         {% endif %}
         {% if doc.to_dict()['level'] == 4 %}
         
-        {{four.append(doc)}}
+        {{four.append(doc) or ""}}
         {% endif %}
     {% endfor %}
+
     <div class="row">
         <div class="col-sm-3">back burner
         {% for doc in one %}

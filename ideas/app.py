@@ -9,6 +9,7 @@ import firebase_admin
 import pyrebase
 from firebase_admin import auth as fbauth
 from firebase_admin import credentials, firestore
+from google.cloud.firestore_v1 import Increment
 
 
 from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for
@@ -156,7 +157,7 @@ def create_app():
         req_user =db.collection('users').document(id).get()
         user_details=req_user.to_dict()
         
-        return render_template('userprofile.html',user_details = user_details)
+        return render_template('userprofile.html',user_details = user_details, msg=session['user'])
 
     @app.route('/edit_user/<string:id>',methods=['GET','POST'])
     def edit_profile(id):
@@ -186,8 +187,10 @@ def create_app():
     @app.route('/promote/<string:id>',methods=['POST'])
     def promote(id):
         idea = db.collection('posts').document(id)
-        
-        idea.update({'level':2 ,'idea':'planning'})
+        level =idea.get().to_dict()['level']
+        level = level + 1        
+        print(level)
+        idea.update({'level':level ,'idea':'planning'})
         return redirect(url_for('idea' ,id=id))    
     
     if __name__ =='__main__':
