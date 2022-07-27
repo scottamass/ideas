@@ -12,7 +12,7 @@ from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Increment
 
 
-from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for
+from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for,flash
 
 def create_app():
     app=Flask(__name__)
@@ -189,8 +189,10 @@ def create_app():
     @app.route('/resetpw/<email>')    
     def reset_password(email):
         print(email)
-        auth.send_password_reset_email(email)    
+        auth.send_password_reset_email(email)
+        flash('request sent please check your emails including junk for password reset email.')    
         return redirect(url_for('edit_profile', id=session['user']))
+
     @app.route('/idea/<string:id>',methods=['GET','POST'])    
     def idea(id):
         user=session['user']
