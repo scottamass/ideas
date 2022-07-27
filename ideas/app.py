@@ -99,6 +99,7 @@ def create_app():
             results=get_idea(uid)
             link=storage.child("Static/profile_pics/scottamass2").get_url(None)
             print(link)
+            
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
         else:
             return redirect(url_for('about'))   
@@ -172,7 +173,14 @@ def create_app():
     def profile(id):
         req_user =db.collection('users').document(id).get()
         user_details=req_user.to_dict()
-        link=storage.child("Static/profile_pics/scottamass2").get_url(None)
+       
+        if "pic" in user_details:
+            link=storage.child(f"Static/profile_pics/{user_details['display name']}").get_url(None)
+             
+        else:
+            
+            link=storage.child(f"Static/profile_pics/defult_user.png").get_url(None)
+
             
         return render_template('userprofile.html',user_details = user_details, msg=session['user'],link=link)
 
