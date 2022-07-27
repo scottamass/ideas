@@ -97,8 +97,7 @@ def create_app():
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
             #results =query.get()
             results=get_idea(uid)
-            link=storage.child("Static/profile_pics/scottamass2").get_url(None)
-            print(link)
+            
             
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
         else:
@@ -134,7 +133,11 @@ def create_app():
                         session['color'] = name['bg']
                     else:
                         session['color'] = '#8fcde3'
-                    
+
+                    if 'pic' not in name:
+                        session['pic'] = "defult_user.png"
+                    else:
+                        session['pic'] =uid
                     
 
                     return redirect(url_for('home'))
