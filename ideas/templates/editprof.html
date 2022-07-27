@@ -11,9 +11,11 @@
     {% endfor %}  
 {{ user_details }}    
 
-<form action="/edit_user/{{user_details['uid']}}" method="post">
+<form action="/edit_user/{{user_details['uid']}}" enctype="multipart/form-data" method="post">
 <label>Bio</label>    
 <textarea class="form-control" name="bio">{{user_details['bio']}}</textarea>
+<label for="formFile" class="form-label">Default file input example</label>
+<input class="form-control" name="file" accept="image/*" type="file" id="formFile">
 <label>Select a background color</label>
 <input class="form-control" type="color" name="bg" value="{{user_details['bg']}}" >
 <label>change password</label>

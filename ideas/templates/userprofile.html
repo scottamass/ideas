@@ -14,7 +14,7 @@
 <div class="row">
     <div class="col-lg-3"><div class="row justify-content-center  " > 
     <div class=" mt-auto mb-auto col-12 col-md-12 order-2 order-lg-2 text-center">{{user_details['display name']}}</div>
-    <img class="col-12 g-0 col-lg-12 order-1 order-lg-1 profileimg"   src="https://i.picsum.photos/id/1024/1920/1280.jpg?hmac=-PIpG7j_fRwN8Qtfnsc3M8-kC3yb0XYOBfVzlPSuVII">
+    <img class="col-12 g-0 col-lg-12 order-1 order-lg-1 profileimg"   src="{{link}}">
     <div class=" d-none mt-1 order-3  d-lg-block order-lg-3">
     {% if session['user'] == user_details['uid'] %}
         <form action="/edit_user/{{user_details['uid']}}">

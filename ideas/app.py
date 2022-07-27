@@ -51,6 +51,8 @@ def create_app():
     auth=pb.auth()
     fauth =firebase_admin
     db=firestore.client()
+    storage=pb.storage()
+
 
     @app.before_request
     def make_sessions_permanant():
@@ -67,7 +69,9 @@ def create_app():
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
         results =query.get()
         return results
-
+    def add_files(id,file):
+        storage.child(f"Static/profile_pics/{id}").put(file)
+        
 ###
 
     @app.route('/',methods=['GET','POST'])
@@ -93,6 +97,8 @@ def create_app():
             #doc_ref = db.collection("posts").where("uid", "==", uid).get()
             #results =query.get()
             results=get_idea(uid)
+            link=storage.child("Static/profile_pics/scottamass2").get_url(None)
+            print(link)
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
         else:
             return redirect(url_for('about'))   
@@ -166,8 +172,9 @@ def create_app():
     def profile(id):
         req_user =db.collection('users').document(id).get()
         user_details=req_user.to_dict()
-        
-        return render_template('userprofile.html',user_details = user_details, msg=session['user'])
+        link=storage.child("Static/profile_pics/scottamass2").get_url(None)
+            
+        return render_template('userprofile.html',user_details = user_details, msg=session['user'],link=link)
 
     @app.route('/edit_user/<string:id>',methods=['GET','POST'])
     def edit_profile(id):
@@ -178,8 +185,14 @@ def create_app():
                 if request.method =='POST':
                     bio = request.form['bio']
                     bg= request.form['bg']
-                    db.collection('users').document(id).set({'bio':bio,'bg':bg},merge=True)
-                    session['color'] =bg
+                    file=request.files['file']
+                    if file.filename != "":
+                        add_files(id,file)
+                        db.collection('users').document(id).set({'bio':bio,'bg':bg,'pic':file.filename},merge=True)
+                    else:
+                        print('no file :)') 
+                        db.collection('users').document(id).set({'bio':bio,'bg':bg},merge=True)
+                    session['color'] =bg   
                     return redirect(request.url)
 
                 return render_template('editprof.html',user_details = user_details)
