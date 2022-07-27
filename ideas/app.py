@@ -186,6 +186,11 @@ def create_app():
         
             else: return "You Shall not Pass",401
 
+    @app.route('/resetpw/<email>')    
+    def reset_password(email):
+        print(email)
+        auth.send_password_reset_email(email)    
+        return redirect(url_for('edit_profile', id=session['user']))
     @app.route('/idea/<string:id>',methods=['GET','POST'])    
     def idea(id):
         user=session['user']
@@ -195,6 +200,13 @@ def create_app():
         ideas=get_idea(user)
         if request.method == 'POST':
             details = request.form['details']
+            '''
+            this is code for another project
+            temp=details
+            list = [l for l in temp.split('\r\n') if l.split()]
+            '''
+            
+            
             db.collection('posts').document(id).set({'details':details},merge=True)
             return redirect(request.url)
         return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user, docs=ideas )  
