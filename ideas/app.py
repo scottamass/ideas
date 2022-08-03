@@ -206,7 +206,7 @@ def create_app():
                     session['color'] =bg   
                     return redirect(request.url)
 
-                return render_template('editprof.html',user_details = user_details)
+                return render_template('editprof.html',user_details = user_details,msg=session['user'])
         
             else: return "You Shall not Pass",401
 
@@ -225,6 +225,7 @@ def create_app():
         idea_id =req_idea.id
         ideas=get_idea(user)
         if request.method == 'POST':
+            
             details = request.form['details']
             '''
             this is code for another project
