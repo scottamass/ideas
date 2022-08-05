@@ -15,7 +15,7 @@ class Item:
             self.status = "Done"
         self.date =date
         self.user=user
-        self.bio=bio
+        self.details=bio
     
 
     @classmethod

@@ -13,10 +13,14 @@
 <h2>My Idea: {{idea.title}}</h2>
 <h3>Idea ID: {{idea.id}}</h3>
 <h3>A bit about your idea ...</h3>
+{% if session['user'] == idea.user %}
 <form action="/idea/{{idea_id}}"  method="post">
     <textarea name="details" class="form-control">{{idea.details}}</textarea>
     <button class="btn">Update</button>
 </form>
+{% else %}
+<p>{{idea.details}}</p>
+{% endif %}
 
 </div>
 <div class="card card-body">
@@ -45,7 +49,7 @@
     </div>
     {% endif %} </div>
 </div>
-
+{% if session['user'] == idea.user %}
 <div class="input-group">
 {% if idea.level > 1 %}    
 <form action="/demote//{{idea.id}}" method="post">
@@ -57,7 +61,9 @@
     <button type="submit">promote idea</button>
 </form>
 {% endif %}
+
 </div>
+{% endif %}
 </div >
 
 
