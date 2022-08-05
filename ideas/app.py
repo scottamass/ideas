@@ -71,6 +71,16 @@ def create_app():
         return results
     def add_files(id,file):
         storage.child(f"Static/profile_pics/{id}").put(file)
+
+    def set_idea_lvl(level):
+        if level==1:
+            return "Back Burner"
+        if level==2:
+            return "Planning"
+        if level==3:
+            return "Planning"
+        if level==4:
+            return "Done"    
         
 ###
 
@@ -244,7 +254,7 @@ def create_app():
         level =idea.get().to_dict()['level']
         level = level + 1        
         print(level)
-        idea.update({'level':level ,'idea':'planning'})
+        idea.update({'level':level ,'idea':set_idea_lvl(level)})
         return redirect(url_for('idea' ,id=id))    
     @app.route('/demote/<string:id>',methods=['POST'])
     def demote(id):
@@ -252,7 +262,7 @@ def create_app():
         level =idea.get().to_dict()['level']
         level = level - 1        
         print(level)
-        idea.update({'level':level ,'idea':'planning'})
+        idea.update({'level':level ,'idea':set_idea_lvl(level)})
         return redirect(url_for('idea' ,id=id))        
     
     
