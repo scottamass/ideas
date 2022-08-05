@@ -10,6 +10,7 @@ import pyrebase
 from firebase_admin import auth as fbauth
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Increment
+from ideas.viewModel import Item
 
 
 from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for,flash
@@ -63,12 +64,21 @@ def create_app():
         return send_from_directory("static",path) """
 
 #functions 
-    def get_idea(uid):
+    def get_ideas(uid):
         doc_ref = db.collection("posts")
         query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
-            #doc_ref = db.collection("posts").where("uid", "==", uid).get()
+            
         results =query.get()
-        return results
+        print(results)
+        items=[]
+        for idea in results:
+            idea_id=idea.id
+            idea=idea.to_dict()
+            item=Item.from_ideas(idea,idea_id)
+            print (item.title)
+            items.append(item)
+        return items
+
     def add_files(id,file):
         storage.child(f"Static/profile_pics/{id}").put(file)
 
@@ -102,11 +112,7 @@ def create_app():
                 data = {'body':body,'uid':uid, 'idea':'on the back burner','level':1, 'ts':datetime.datetime.now() }
                 db.collection('posts').add(data)
                 return redirect(url_for('home'))
-            #doc_ref = db.collection("posts")
-            #query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
-            #doc_ref = db.collection("posts").where("uid", "==", uid).get()
-            #results =query.get()
-            results=get_idea(uid)
+            results=get_ideas(uid)
             
             
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
@@ -231,16 +237,18 @@ def create_app():
     def idea(id):
         user=session['user']
         req_idea = db.collection('posts').document(id).get()
-        processed_idea= req_idea.to_dict()
-        idea_id =req_idea.id
-        ideas=get_idea(user)
+        req_idea=req_idea.to_dict()
+        processed_idea=Item.from_ideas(req_idea,id)
+        
+        ideas=get_ideas(user)
+        
         if request.method == 'POST':
             
             details = request.form['details']
            
             db.collection('posts').document(id).set({'details':details},merge=True)
             return redirect(request.url)
-        return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user, docs=ideas )  
+        return render_template('idea.html',idea=processed_idea, msg=user, docs=ideas )  
 
     @app.route('/promote/<string:id>',methods=['POST'])
     def promote(id):

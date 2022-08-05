@@ -4,17 +4,17 @@
 <div class="card d-none d-md-block col-md-3"> <h2>Other ideas</h2>
     <ul class="navbar-nav">
         {% for doc in docs %}
-        <li class="nav-items"><a href="{{doc.id}}" class="nav-link badge bg-dark">{{doc.to_dict()['body']}}</a></li>
+        <li class="nav-items"><a href="{{doc.id}}" class="nav-link badge bg-dark">{{doc.title}}</a></li>
         {% endfor %} 
     </ul>
 </div>
 <div class="col-md-9">    
 <div class="card card-body">
-<h2>My Idea: {{idea['body']}}</h2>
-<h3>Idea ID: {{idea_id}}</h3>
+<h2>My Idea: {{idea.title}}</h2>
+<h3>Idea ID: {{idea.id}}</h3>
 <h3>A bit about your idea ...</h3>
 <form action="/idea/{{idea_id}}"  method="post">
-    <textarea name="details" class="form-control">{{idea['details']}}</textarea>
+    <textarea name="details" class="form-control">{{idea.details}}</textarea>
     <button class="btn">Update</button>
 </form>
 
@@ -23,37 +23,37 @@
 <h3>Idea journey</h3>
 <div class="row">
     <div class="col-sm-3">back burner
-    {% if idea['level'] == 1 %}
+    {% if idea.level == 1 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %}
 </div>
     <div class="col-sm-3">planning
-        {% if idea['level'] == 2 %}
+        {% if idea.level == 2 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %}
     </div>
     <div class="col-sm-3">doing
-        {% if idea['level'] == 3 %}
+        {% if idea.level == 3 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %} </div>
     <div class="col-sm-3">done
-        {% if idea['level'] == 4 %}
+        {% if idea.level == 4 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %} </div>
 </div>
 
 <div class="input-group">
-{% if idea['level'] > 1 %}    
-<form action="/demote//{{idea_id}}" method="post">
+{% if idea.level > 1 %}    
+<form action="/demote//{{idea.id}}" method="post">
     <button type="submit">demote idea</button>
 </form>
 {% endif %}
-{% if idea['level'] < 4 %}    
-<form action="/promote//{{idea_id}}" method="post">
+{% if idea.level < 4 %}    
+<form action="/promote//{{idea.id}}" method="post">
     <button type="submit">promote idea</button>
 </form>
 {% endif %}
@@ -61,9 +61,10 @@
 </div >
 
 
-<div>
+<!--<div>
     <h3>comments</h3>
     </div>
 </div >
+-->
 
 {% endblock %}
