@@ -78,7 +78,7 @@ def create_app():
         if level==2:
             return "Planning"
         if level==3:
-            return "Planning"
+            return "Doing"
         if level==4:
             return "Done"    
         
@@ -237,13 +237,7 @@ def create_app():
         if request.method == 'POST':
             
             details = request.form['details']
-            '''
-            this is code for another project
-            temp=details
-            list = [l for l in temp.split('\r\n') if l.split()]
-            '''
-            
-            
+           
             db.collection('posts').document(id).set({'details':details},merge=True)
             return redirect(request.url)
         return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user, docs=ideas )  
