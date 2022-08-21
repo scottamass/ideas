@@ -20,13 +20,13 @@ def get_ideas(uid):
         query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
             
         results =query.get()
-        print(results)
+        
         items=[]
         for idea in results:
             idea_id=idea.id
             idea=idea.to_dict()
             item=Item.from_ideas(idea,idea_id)
-            print (item.title)
+            
             items.append(item)
         return items
 def add_files(id,file):
@@ -41,3 +41,6 @@ def set_idea_lvl(level):
             return "Doing"
         if level==4:
             return "Done"    
+
+def add_comment():
+    pass            

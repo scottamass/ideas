@@ -14,7 +14,7 @@
 <h3>Idea ID: {{idea.id}}</h3>
 <h3>A bit about your idea ...</h3>
 {% if session['user'] == idea.user %}
-<form action="/idea/{{idea_id}}"  method="post">
+<form action="/idea/{{idea.id}}"  method="post">
     <textarea name="details" class="form-control">{{idea.details}}</textarea>
     <button class="btn">Update</button>
 </form>
@@ -67,10 +67,42 @@
 </div >
 
 
-<!--<div>
+<div>
     <h3>comments</h3>
+ <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add Comment
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/add-comment//{{idea.id}}" method="post">
+        <div class="modal-body">
+            <textarea name="comment_in" class="form-control"></textarea>  
+                
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Comment</button>
+        
+        </div>
+    </form> 
+      </div>
+    </div>
+  </div>   
+   
+    {% for comment in comments %}
+    <p>{{comment}}</p>
+    {% endfor %}
     </div>
 </div >
--->
+
 
 {% endblock %}
