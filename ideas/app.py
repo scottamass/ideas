@@ -251,7 +251,8 @@ def create_app():
         comments=[]
         for comment in get_comments:
             comments.append(comment.to_dict())
-        print (comments)
+        print(comments)   
+        comments.sort( reverse=True,key = lambda x:x['ts'])
         
         if request.method == 'POST':
             

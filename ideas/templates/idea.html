@@ -99,15 +99,15 @@
   </div>   
    
     {% for comment in comments %}
-    {%if comment['user'] == idea.user%}
+    {%if comment['user'] == session['user']%}
     <div class="row">
         <div class="col-sm-1"></div>
         <div class="col-sm-6">
-    <div class="card carduser">
+    <div class="card mb-1 carduser">
     {% else %}
     <div class="row">
         <div class="col-sm-6">
-    <div class="card">
+    <div class="card cardother mb-1">
         {% endif %}    
     
     <div class="card-body">
@@ -129,6 +129,9 @@
     .carduser{
         background-color: aqua !important;
     }
+
+
+    .cardother{background-color: rgb(255, 255, 255) !important; }
 </style>
 
 {% endblock %}
