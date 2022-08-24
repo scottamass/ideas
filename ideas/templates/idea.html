@@ -4,66 +4,134 @@
 <div class="card d-none d-md-block col-md-3"> <h2>Other ideas</h2>
     <ul class="navbar-nav">
         {% for doc in docs %}
-        <li class="nav-items"><a href="{{doc.id}}" class="nav-link badge bg-dark">{{doc.to_dict()['body']}}</a></li>
+        <li class="nav-items"><a href="{{doc.id}}" class="nav-link badge bg-dark">{{doc.title}}</a></li>
         {% endfor %} 
     </ul>
 </div>
 <div class="col-md-9">    
 <div class="card card-body">
-<h2>My Idea: {{idea['body']}}</h2>
-<h3>Idea ID: {{idea_id}}</h3>
+<h2>My Idea: {{idea.title}}</h2>
+<h3>Idea ID: {{idea.id}}</h3>
 <h3>A bit about your idea ...</h3>
-<form action="/idea/{{idea_id}}"  method="post">
-    <textarea name="details" class="form-control">{{idea['details']}}</textarea>
+{% if session['user'] == idea.user %}
+<form action="/idea/{{idea.id}}"  method="post">
+    <textarea name="details" class="form-control">{{idea.details}}</textarea>
     <button class="btn">Update</button>
 </form>
+{% else %}
+<p>{{idea.details}}</p>
+{% endif %}
 
 </div>
 <div class="card card-body">
 <h3>Idea journey</h3>
 <div class="row">
     <div class="col-sm-3">back burner
-    {% if idea['level'] == 1 %}
+    {% if idea.level == 1 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %}
 </div>
     <div class="col-sm-3">planning
-        {% if idea['level'] == 2 %}
+        {% if idea.level == 2 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %}
     </div>
     <div class="col-sm-3">doing
-        {% if idea['level'] == 3 %}
+        {% if idea.level == 3 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %} </div>
     <div class="col-sm-3">done
-        {% if idea['level'] == 4 %}
+        {% if idea.level == 4 %}
     <div class="card"><div class="card-body"> your idea</div>
     </div>
     {% endif %} </div>
 </div>
-
+{% if session['user'] == idea.user %}
 <div class="input-group">
-{% if idea['level'] > 1 %}    
-<form action="/demote//{{idea_id}}" method="post">
+{% if idea.level > 1 %}    
+<form action="/demote//{{idea.id}}" method="post">
     <button type="submit">demote idea</button>
 </form>
 {% endif %}
-{% if idea['level'] < 4 %}    
-<form action="/promote//{{idea_id}}" method="post">
+{% if idea.level < 4 %}    
+<form action="/promote//{{idea.id}}" method="post">
     <button type="submit">promote idea</button>
 </form>
 {% endif %}
+
 </div>
+{% endif %}
 </div >
 
 
 <div>
     <h3>comments</h3>
+ <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add Comment
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/add-comment//{{idea.id}}" method="post">
+        <div class="modal-body">
+            <textarea name="comment_in" class="form-control"></textarea>  
+                
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Comment</button>
+        
+        </div>
+    </form> 
+      </div>
+    </div>
+  </div>   
+   
+    {% for comment in comments %}
+    {%if comment['user'] == session['user']%}
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6">
+    <div class="card mb-1 carduser">
+    {% else %}
+    <div class="row">
+        <div class="col-sm-6">
+    <div class="card cardother mb-1">
+        {% endif %}    
+    
+    <div class="card-body">
+        <h5 class="card-title">{{comment.comment}}</h5>
+        
+        
+      </div>
+      <div class="card-footer text-muted">
+        {{comment.user}}
+      </div>
+    </div>
+        </div>
+    </div>
+    {% endfor %}
     </div>
 </div >
+
+<style>
+    .carduser{
+        background-color: aqua !important;
+    }
+
+
+    .cardother{background-color: rgb(255, 255, 255) !important; }
+</style>
 
 {% endblock %}

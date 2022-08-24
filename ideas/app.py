@@ -1,6 +1,7 @@
 #v0.9.1a
 
 
+
 import datetime
 
 import os
@@ -10,6 +11,9 @@ import pyrebase
 from firebase_admin import auth as fbauth
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Increment
+from google.cloud.firestore import ArrayUnion
+from ideas.viewModel import Item
+from ideas.config import Key ,FBconfig
 
 
 from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for,flash
@@ -20,7 +24,7 @@ def create_app():
     app.config['SESSION_PERMANENT'] = True
     app.secret_key = "shhhh"
 
-    FBconfig= {
+    """ FBconfig= {
         "apiKey": os.getenv('APIKEY'),
         "authDomain": "ideapad-9e040.firebaseapp.com",
         "databaseURL":"",
@@ -42,7 +46,7 @@ def create_app():
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-888uq%40ideapad-9e040.iam.gserviceaccount.com"
     }
-
+ """
     key = os.getenv('KEY')
 
     cred=credentials.Certificate(Key)
@@ -63,12 +67,21 @@ def create_app():
         return send_from_directory("static",path) """
 
 #functions 
-    def get_idea(uid):
+    def get_ideas(uid):
         doc_ref = db.collection("posts")
         query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
-            #doc_ref = db.collection("posts").where("uid", "==", uid).get()
+            
         results =query.get()
-        return results
+        
+        items=[]
+        for idea in results:
+            idea_id=idea.id
+            idea=idea.to_dict()
+            item=Item.from_ideas(idea,idea_id)
+            
+            items.append(item)
+        return items
+
     def add_files(id,file):
         storage.child(f"Static/profile_pics/{id}").put(file)
 
@@ -102,11 +115,7 @@ def create_app():
                 data = {'body':body,'uid':uid, 'idea':'on the back burner','level':1, 'ts':datetime.datetime.now() }
                 db.collection('posts').add(data)
                 return redirect(url_for('home'))
-            #doc_ref = db.collection("posts")
-            #query = doc_ref.where("uid","==",uid).order_by('ts', direction=firestore.Query.DESCENDING)
-            #doc_ref = db.collection("posts").where("uid", "==", uid).get()
-            #results =query.get()
-            results=get_idea(uid)
+            results=get_ideas(uid)
             
             
             return render_template('index.html' ,uid=uid,msg=uid ,doc_ref=results)
@@ -231,16 +240,27 @@ def create_app():
     def idea(id):
         user=session['user']
         req_idea = db.collection('posts').document(id).get()
-        processed_idea= req_idea.to_dict()
-        idea_id =req_idea.id
-        ideas=get_idea(user)
+        
+        req_idea=req_idea.to_dict()
+        
+        processed_idea=Item.from_ideas(req_idea,id)
+        
+        ideas=get_ideas(user)
+        #processed_idea=Item.from_ideas(req_idea,id)
+        get_comments = db.collection('posts').document(id).collection('comments').get()
+        comments=[]
+        for comment in get_comments:
+            comments.append(comment.to_dict())
+        print(comments)   
+        comments.sort( reverse=True,key = lambda x:x['ts'])
+        
         if request.method == 'POST':
             
             details = request.form['details']
            
             db.collection('posts').document(id).set({'details':details},merge=True)
             return redirect(request.url)
-        return render_template('idea.html',idea=processed_idea ,idea_id=idea_id , msg=user, docs=ideas )  
+        return render_template('idea.html',idea=processed_idea, comments=comments , msg=user, docs=ideas )  
 
     @app.route('/promote/<string:id>',methods=['POST'])
     def promote(id):
@@ -257,7 +277,24 @@ def create_app():
         level = level - 1        
         print(level)
         idea.update({'level':level ,'idea':set_idea_lvl(level)})
-        return redirect(url_for('idea' ,id=id))        
+        return redirect(url_for('idea' ,id=id))
+
+    @app.route('/add-comment/<string:id>', methods=['POST'])
+    def comment(id):
+        user=session['user']
+        details=request.form['comment_in']
+
+        data={u'comment':details,'user':user,'ts':datetime.datetime.now()}
+        
+        db.collection('posts').document(id).collection('comments').add(data)
+        return redirect(url_for('idea' ,id=id))
+        
+        
+        
+        
+        
+
+            
     
     
     
